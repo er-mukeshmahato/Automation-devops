@@ -14,10 +14,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
+
 @NoArgsConstructor
-@Entity
+@AllArgsConstructor
 @Data
+@Entity
 @Table(name = "user")
 public class User_info {
 

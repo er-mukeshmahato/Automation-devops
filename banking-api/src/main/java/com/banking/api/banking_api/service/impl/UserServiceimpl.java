@@ -40,29 +40,32 @@ public class UserServiceimpl implements IUserService {
 
     @Override
     public User_info saveOrUpdate(Long id, UserDTO userDTO) {
-
+        // Fetch the existing user by ID
         Optional<User_info> existingUser = userRepository.findById(id);
-       
+    
+        // Check if the user exists
         if (existingUser.isPresent()) {
-             User_info user=new User_info();
-             user.setName(userDTO.getName());
-             user.setEmail(userDTO.getEmail());
-             user.setPassword(passwordHasher.hashPassword(userDTO.getPassword()));
-             user.setCreated_at(LocalDateTime.now());
-             return userRepository.save(user);
-
-        }
-        else {
-            User_info user = new User_info();
-            user.setId(0l);
+            // User exists, update their information
+            User_info user = existingUser.get();  // Retrieve the existing user
             user.setName(userDTO.getName());
             user.setEmail(userDTO.getEmail());
-            user.setPassword(passwordHasher.hashPassword(userDTO.getPassword()));
-            user.setCreated_at(LocalDateTime.now());
-            return userRepository.save(user);
+            user.setPassword(passwordHasher.hashPassword(userDTO.getPassword()));  // Hash the password
+            user.setUpdated_at(LocalDateTime.now());  // Set the updated timestamp (if needed)
+    
+            return userRepository.save(user);  // Save the updated user
+        } else {
+            // If user does not exist, create a new user
+            User_info user = new User_info();
+            user.setId(id);  // Set the provided ID, so it doesn't get treated as a new entity
+            user.setName(userDTO.getName());
+            user.setEmail(userDTO.getEmail());
+            user.setPassword(passwordHasher.hashPassword(userDTO.getPassword()));  // Hash the password
+            user.setCreated_at(LocalDateTime.now());  // Set the created timestamp
+    
+            return userRepository.save(user);  // Save the new user
         }
-       
     }
+    
 
     @Override
     public Optional<UserDTO> getUserById(Long id) {

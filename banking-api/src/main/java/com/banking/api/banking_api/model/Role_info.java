@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +17,8 @@ import lombok.NoArgsConstructor;
 @Entity(name = "role_info")
 public class Role_info {
     @Column(name = "roleid")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // You can adjust the strategy based on your database
     private int roleid;
     @Column(name = "rolename")
     private String rolename;

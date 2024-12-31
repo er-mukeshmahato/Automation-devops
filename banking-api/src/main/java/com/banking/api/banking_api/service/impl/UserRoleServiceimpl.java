@@ -47,9 +47,9 @@ public class UserRoleServiceimpl implements IUserRoleService {
 
     @Override
     public Optional<UserRoleDTO> findRoleByUserId(Long id) {
-         UserRole_info userrole = userroleRepository.findRoleByUserId(id);
+         Optional<UserRole_info> userrole = userroleRepository.findById(id);
           if(userrole != null) {
-              return Optional.of(roleMapper.mapToUserRoleDTO(userrole));
+              return Optional.of(roleMapper.mapToUserRoleDTO(userrole.get()));
           }
             return Optional.empty();
     }
