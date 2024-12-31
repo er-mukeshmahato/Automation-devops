@@ -35,92 +35,129 @@ public class UserController {
 
     @GetMapping("/")
     public ResponseEntity<ApiResponse<List<UserDTO>>> getAllUsers() {
-        List<UserDTO> userDTOs=userService.getAllUsers();
-        if (userDTOs.isEmpty()) {
+        try {
+            List<UserDTO> userDTOs = userService.getAllUsers();
+            if (userDTOs.isEmpty()) {
+                ApiResponse<List<UserDTO>> response = new ApiResponse<>(
+                    "success",
+                    null,
+                    "No users found",
+                    null
+                );
+                return ResponseEntity.ok(response);
+            }
+
             ApiResponse<List<UserDTO>> response = new ApiResponse<>(
                 "success",
-                null,
-                "No users found",
+                userDTOs,
+                "Users fetched successfully",
                 null
-             );
+            );
             return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            ApiResponse<List<UserDTO>> response = new ApiResponse<>(
+                "error",
+                null,
+                "An error occurred while fetching users",
+                500
+            );
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
-        
-        ApiResponse<List<UserDTO>> response = new ApiResponse<>(
-            "success",
-            userDTOs,
-            "Users fetched successfully",
-            null
-        );
-        return ResponseEntity.ok(response);
-
-       
     }
 
-    // Endpoint to get a user by ID
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<UserDTO>> getUserById(@PathVariable Long id) {
-        Optional<UserDTO> user = userService.getUserById(id);
+        try {
+            Optional<UserDTO> user = userService.getUserById(id);
 
-        if (user.isPresent()) {
+            if (user.isPresent()) {
+                ApiResponse<UserDTO> response = new ApiResponse<>(
+                        "success",
+                        user.get(),
+                        "User fetched successfully",
+                        null);
+                return ResponseEntity.ok(response);
+            } else {
+                ApiResponse<UserDTO> response = new ApiResponse<>(
+                        "error",
+                        null,
+                        "User not found",
+                        404);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+        } catch (Exception e) {
             ApiResponse<UserDTO> response = new ApiResponse<>(
-                    "success",
-                    user.get(),
-                    "User fetched successfully",
-                    null);
-            return ResponseEntity.ok(response);
-        } else {
-            ApiResponse<UserDTO> response = new ApiResponse<>(
-                    "error",
-                    null,
-                    "User not found",
-                    404);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                "error",
+                null,
+                "An error occurred while fetching the user",
+                500
+            );
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
-    // Save or update user
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<UserDTO>> saveOrUpdateUser(
             @PathVariable Long id,
             @RequestBody UserDTO userDTO) {
+        try {
+            boolean userExists = userService.getUserById(id).isPresent();
+            User_info savedUser = userService.saveOrUpdate(id, userDTO); // Save or update the user
 
-        User_info savedUser = userService.saveOrUpdate(id, userDTO); // Save or update the user
+            // Create a response with the user data and success message
+            String message = userExists ? "User updated successfully" : "User created successfully";
+            ApiResponse<UserDTO> response = new ApiResponse<>(
+                    "success",
+                    savedUser != null ? userMapper.mapToUserDTO(savedUser) : null,
+                    message,
+                    null);
 
-        // Create a response with the user data and success message
-        ApiResponse<UserDTO> response = new ApiResponse<>(
-                "success",
-                savedUser != null ? userMapper.mapToUserDTO(savedUser) : null,
-                "User created successfully",
-                null);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            HttpStatus status = userExists ? HttpStatus.OK : HttpStatus.CREATED;
+            return ResponseEntity.status(status).body(response);
+        } catch (Exception e) {
+            ApiResponse<UserDTO> response = new ApiResponse<>(
+                "error",
+                null,
+                "An error occurred while saving or updating the user",
+                500
+            );
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
-        boolean deleted = userService.deleteUserById(id);  // Call the service to delete the user
-        ApiResponse<Void> response;
-        
-        if (deleted) {
-            // If user is deleted successfully
-            response = new ApiResponse<>(
-                "success", 
-                null, 
-                "User Deleted Successfully", 
-                null
+        try {
+            boolean deleted = userService.deleteUserById(id);  // Call the service to delete the user
+            ApiResponse<Void> response;
+
+            if (deleted) {
+                // If user is deleted successfully
+                response = new ApiResponse<>(
+                    "success", 
+                    null, 
+                    "User Deleted Successfully", 
+                    null
+                );
+                return ResponseEntity.ok(response);  // Return 204 No Content with response
+            } else {
+                // If the user was not found and couldn't be deleted
+                response = new ApiResponse<>(
+                    "error", 
+                    null, 
+                    "User not found", 
+                    404
+                );
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);  // Return 404 Not Found with error response
+            }
+        } catch (Exception e) {
+            ApiResponse<Void> response = new ApiResponse<>(
+                "error",
+                null,
+                "An error occurred while deleting the user",
+                500
             );
-            return ResponseEntity.ok(response);  // Return 204 No Content with response
-        } else {
-            // If the user was not found and couldn't be deleted
-            response = new ApiResponse<>(
-                "error", 
-                null, 
-                "User not found", 
-                404
-            );
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);  // Return 404 Not Found with error response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-    
 }

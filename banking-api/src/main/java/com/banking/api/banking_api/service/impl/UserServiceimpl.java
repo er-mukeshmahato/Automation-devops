@@ -9,11 +9,14 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.banking.api.banking_api.constant.roleConstants;
 import com.banking.api.banking_api.dto.UserDTO;
+import com.banking.api.banking_api.dto.UserRoleDTO;
 import com.banking.api.banking_api.helper.PasswordHasher;
 import com.banking.api.banking_api.mapper.UserMapper;
 import com.banking.api.banking_api.model.User_info;
 import com.banking.api.banking_api.repository.IUserRepository;
+import com.banking.api.banking_api.service.IUserRoleService;
 import com.banking.api.banking_api.service.IUserService;
 
 @Service
@@ -22,12 +25,14 @@ public class UserServiceimpl implements IUserService {
     private IUserRepository userRepository;
     private UserMapper userMapper;
     private PasswordHasher passwordHasher;
+    private IUserRoleService userRoleService;
 
     @Autowired
-    public void UserServiceImpl(IUserRepository userRepository, UserMapper userMapper,PasswordHasher passwordHasher) {
+    public void UserServiceImpl(IUserRepository userRepository, UserMapper userMapper,PasswordHasher passwordHasher,IUserRoleService userRoleService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordHasher = passwordHasher;
+        this.userRoleService = userRoleService;
     }
 
     @Override
@@ -61,8 +66,13 @@ public class UserServiceimpl implements IUserService {
             user.setEmail(userDTO.getEmail());
             user.setPassword(passwordHasher.hashPassword(userDTO.getPassword()));  // Hash the password
             user.setCreated_at(LocalDateTime.now());  // Set the created timestamp
-    
-            return userRepository.save(user);  // Save the new user
+            User_info userdetails= userRepository.save(user);
+            if(userdetails!=null){
+                userRoleService.assignRoletoUser(roleConstants.User, userdetails.getId());
+            }
+            
+          
+            return userdetails;  // Save the new user
         }
     }
     
