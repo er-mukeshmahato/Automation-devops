@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.banking.api.banking_api.constant.roleConstants;
 import com.banking.api.banking_api.dto.UserDTO;
-import com.banking.api.banking_api.dto.UserRoleDTO;
 import com.banking.api.banking_api.helper.PasswordHasher;
 import com.banking.api.banking_api.mapper.UserMapper;
 import com.banking.api.banking_api.model.User_info;
