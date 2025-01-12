@@ -1,0 +1,61 @@
+pipeline {
+    agent any
+    environment {
+        FRONTEND_IMAGE = "your-dockerhub-frontend-image"
+        BACKEND_IMAGE = "your-dockerhub-backend-image"
+        DOCKER_REGISTRY = "docker.io"
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the source code from the Git repository
+                checkout scm
+            }
+        }
+        stage('Build Frontend Docker Image') {
+            steps {
+                dir('frontend') {
+                    script {
+                        docker.build("${FRONTEND_IMAGE}")
+                    }
+                }
+            }
+        }
+        stage('Build Backend Docker Image') {
+            steps {
+                dir('backend') {
+                    script {
+                        docker.build("${BACKEND_IMAGE}")
+                    }
+                }
+            }
+        }
+        stage('Push Docker Images') {
+            steps {
+                script {
+                    docker.withRegistry("https://${DOCKER_REGISTRY}", 'dockerhub-credentials') {
+                        docker.image("${FRONTEND_IMAGE}").push()
+                        docker.image("${BACKEND_IMAGE}").push()
+                    }
+                }
+            }
+        }
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    sh 'kubectl apply -f kubernetes/mysql-deployment.yaml'
+                    sh 'kubectl apply -f kubernetes/backend-deployment.yaml'
+                    sh 'kubectl apply -f kubernetes/frontend-deployment.yaml'
+                }
+            }
+        }
+    }
+    post {
+        success {
+            echo "Deployment Successful!"
+        }
+        failure {
+            echo "Deployment Failed!"
+        }
+    }
+}

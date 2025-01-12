@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.banking.api.banking_api.dto.ApiResponse;
@@ -27,13 +27,13 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<String>> login(@RequestParam String username, @RequestParam String password) {
+    public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginDTO loginDTO) {
         try {
             // Step 1: Hash the password
-            String hashPassword = passwordHasher.hashPassword(password);
+            String hashPassword = passwordHasher.hashPassword(loginDTO.getPassword());
 
             // Step 2: Authenticate the password
-            boolean isValid = passwordHasher.authenticatePassword(password, hashPassword);
+            boolean isValid = passwordHasher.authenticatePassword(loginDTO.getPassword(), hashPassword);
 
             if (!isValid) {
                 // Invalid password
@@ -46,7 +46,7 @@ public class AuthController {
             }
 
             // Step 3: Get user details from the auth service
-            LoginDTO user = authService.getUserDetail(username);
+            LoginDTO user = authService.getUserDetail(loginDTO.getUsername());
 
             if (user == null) {
                 // User not found
