@@ -1,8 +1,22 @@
-import React, { Component } from 'react'
-export default class Login extends Component {
-  render() {
+import React, { useState } from 'react';
+
+
+import useLogin from '../hooks/useLogin';
+
+const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const { mutate, isLoading, error } = useLogin();  // Use the useLogin hook
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    mutate({ email, password });  // Call mutate to trigger the login mutation
+  };
+  
+  render() 
     return (
-      <form>
+      <form onSubmit={handleSubmit}>
         <h3>Sign In</h3>
         <div className="mb-3">
           <label>Email address</label>
@@ -10,6 +24,8 @@ export default class Login extends Component {
             type="email"
             className="form-control"
             placeholder="Enter email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
           />
         </div>
         <div className="mb-3">
@@ -18,6 +34,8 @@ export default class Login extends Component {
             type="password"
             className="form-control"
             placeholder="Enter password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
           />
         </div>
         <div className="mb-3">
@@ -43,4 +61,4 @@ export default class Login extends Component {
       </form>
     )
   }
-}
+export default Login;

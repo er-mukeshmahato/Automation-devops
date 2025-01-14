@@ -19,33 +19,19 @@ import com.banking.api.banking_api.util.JwtUtil;
 public class AuthController {
     private final IAuthService authService;
     private final PasswordHasher passwordHasher;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    public AuthController(IAuthService authService, PasswordHasher passwordHasher) {
+    public AuthController(IAuthService authService, PasswordHasher passwordHasher, JwtUtil jwtUtil) {
         this.authService = authService;
         this.passwordHasher = passwordHasher;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginDTO loginDTO) {
         try {
-            // Step 1: Hash the password
-            String hashPassword = passwordHasher.hashPassword(loginDTO.getPassword());
-
-            // Step 2: Authenticate the password
-            boolean isValid = passwordHasher.authenticatePassword(loginDTO.getPassword(), hashPassword);
-
-            if (!isValid) {
-                // Invalid password
-                ApiResponse<String> response = new ApiResponse<>(
-                        "error",
-                        null,
-                        "Unauthorized: Incorrect password",
-                        401);
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            }
-
-            // Step 3: Get user details from the auth service
+            // Step 1: Get the user details from the auth service
             LoginDTO user = authService.getUserDetail(loginDTO.getUsername());
 
             if (user == null) {
@@ -58,17 +44,38 @@ public class AuthController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
 
-            // Step 4: Generate JWT token
-            JwtUtil jwtUtil = new JwtUtil();
+            // Step 2: Authenticate the password using the stored hashed password
+            boolean isValid = passwordHasher.authenticatePassword(loginDTO.getPassword(), user.getPassword());
+
+            if (!isValid) {
+                // Invalid password
+                ApiResponse<String> response = new ApiResponse<>(
+                        "error",
+                        null,
+                        "Unauthorized: Incorrect password",
+                        401);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+
+            // Step 3: Generate JWT token
             String token = jwtUtil.generateToken(user.getUsername());
 
-            // Step 6: Return success response with token and userDTO
+            if (token == null || token.isEmpty()) {
+                // JWT generation failed
+                ApiResponse<String> response = new ApiResponse<>(
+                        "error",
+                        null,
+                        "Failed to generate JWT token",
+                        500);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
+
+            // Step 4: Return success response with token
             ApiResponse<String> response = new ApiResponse<>(
                     "success",
                     token,
                     "Login successful",
                     null);
-
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
@@ -81,5 +88,4 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-
 }
