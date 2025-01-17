@@ -1,3 +1,35 @@
+# Database Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:latest
+          env:
+            - name: MYSQL_ROOT_HOST
+              value: "%"
+            - name: MYSQL_ROOT_PASSWORD
+              value: ""  # You can set a root password here if required
+            - name: MYSQL_ALLOW_EMPTY_PASSWORD
+              value: "yes"
+            - name: MYSQL_DATABASE
+              value: banking_app
+            - name: DATABASE_PORT
+              value: "3306"
+          ports:
+            - containerPort: 3306  # Expose port 3306 for MySQL within the container
+---
 # Backend Deployment
 apiVersion: apps/v1
 kind: Deployment
@@ -48,38 +80,22 @@ spec:
           image: ermukeshmahato/bank-frontend:v1.0.0
           ports:
             - containerPort: 3000  # Expose port 3000 within the container
+
 ---
-# Database Deployment
-apiVersion: apps/v1
-kind: Deployment
+# Database Service
+apiVersion: v1
+kind: Service
 metadata:
   name: database
 spec:
-  replicas: 1
   selector:
-    matchLabels:
-      app: database
-  template:
-    metadata:
-      labels:
-        app: database
-    spec:
-      containers:
-        - name: mysql
-          image: mysql:latest
-          env:
-            - name: MYSQL_ROOT_HOST
-              value: "%"
-            - name: MYSQL_ROOT_PASSWORD
-              value: ""  # You can set a root password here if required
-            - name: MYSQL_ALLOW_EMPTY_PASSWORD
-              value: "yes"
-            - name: MYSQL_DATABASE
-              value: banking_app
-            - name: DATABASE_PORT
-              value: "3306"
-          ports:
-            - containerPort: 3306  # Expose port 3306 for MySQL within the container
+    app: database
+  ports:
+    - protocol: TCP
+      port: 3306  # External service port
+      targetPort: 3306  # Container port
+  type: ClusterIP  # Internal service, accessible only within the cluster
+
 ---
 # Backend Service
 apiVersion: v1
@@ -109,17 +125,3 @@ spec:
       targetPort: 3000  # Container port
       nodePort: 30001  # Exposing the frontend service on port 30001
   type: NodePort  # Exposing service outside the cluster
----
-# Database Service
-apiVersion: v1
-kind: Service
-metadata:
-  name: database
-spec:
-  selector:
-    app: database
-  ports:
-    - protocol: TCP
-      port: 3306  # External service port
-      targetPort: 3306  # Container port
-  type: ClusterIP  # Internal service, accessible only within the cluster

@@ -1,7 +1,8 @@
+# Frontend Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-deployment
+  name: frontend
 spec:
   replicas: 1
   selector:
@@ -14,17 +15,22 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: your-dockerhub-frontend-image
+          image: ermukeshmahato/bank-frontend:v1.0.0
           ports:
-            - containerPort: 80
+            - containerPort: 3000  # Expose port 3000 within the container
+
 ---
+# Frontend Service (with NodePort to expose outside the cluster)
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend-service
+  name: frontend
 spec:
   selector:
     app: frontend
   ports:
-    - port: 80
-      targetPort: 80
+    - protocol: TCP
+      port: 8082  # External service port
+      targetPort: 3000  # Container port
+      nodePort: 30001  # Exposing the frontend service on port 30001
+  type: NodePort  # Exposing service outside the cluster
