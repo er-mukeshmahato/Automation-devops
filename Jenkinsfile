@@ -4,8 +4,9 @@ pipeline {
     environment {
         DOCKER_PASSWORD='jen-doc-hu'
         DOCKER_REGISTRY = 'ermukeshmahato'  // Docker registry URL (e.g., Docker Hub or AWS ECR)
-        FRONTEND_IMAGE = 'demo-frontend:v1.0.0'
-        BACKEND_IMAGE = 'demo-backend:v1.0.0'
+        FRONTEND_IMAGE = 'demo-frontend'
+        BACKEND_IMAGE = 'demo-backend'
+        IMAGE_TAG='v1.0.0'
         MYSQL_IMAGE = 'mysql:8'
         
     }
@@ -20,11 +21,10 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 script {
+                   
                     // Build backend Docker image
                   //  sh 'docker build -t $DOCKER_REGISTRY/$BACKEND_IMAGE ./banking-api'
-
-                    // Build frontend Docker image
-                    sh 'docker build -t $DOCKER_REGISTRY/$FRONTEND_IMAGE ./bank-frontend'
+                       docker.build("${FRONTEND_IMAGE}:${IMAGE_TAG}", "-f bank-frontend/Dockerfile bank-frontend")
                 }
             }
         }
@@ -33,11 +33,14 @@ pipeline {
             steps {
                 script {
                     // Log in to Docker registry
-                    sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin $DOCKER_REGISTRY"
+                  //  sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin $DOCKER_REGISTRY"
 
                     // Push images to Docker registry
                   //  sh 'docker push $DOCKER_REGISTRY/$BACKEND_IMAGE'
-                    sh 'docker push $DOCKER_REGISTRY/$FRONTEND_IMAGE'
+                   // sh 'docker push $DOCKER_REGISTRY/$FRONTEND_IMAGE'
+                     docker.withRegistry('https://registry.hub.docker.com', '$DOCKER_PASSWORD') {
+                        docker.image("${FRONTEND_IMAGE}:${IMAGE_TAG}").push()
+                    }
                 }
             }
         }
