@@ -1,10 +1,8 @@
-// src/hooks/useUsers.js
-import { useQuery } from '@tanstack/react-query';
-import { getUsers } from '../api';  // Import the getUsers API function
+import { getUsers } from '../api';  // This imports all API functions re-exported from index.js
 
-// Custom hook to fetch users
-const useUsers = () => {
-  return useQuery(['users'], getUsers);  // React Query hook for fetching users
-};
-
-export default useUsers;
+// Example of using the getUsers function
+getUsers().then((response) => {
+  console.log(response.data);
+}).catch((error) => {
+  console.error('Error fetching users:', error);
+});

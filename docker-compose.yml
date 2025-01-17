@@ -1,32 +1,46 @@
 version: '3.8'
 
 services:
-  # Backend Service
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    image: backend:v1.0.0
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://database:3306/banking_app?allowPublicKeyRetrieval=true&useSSL=false
-      - SPRING_DATASOURCE_USERNAME=root  # Use a non-root user (if defined)
-      - SPRING_DATASOURCE_PASSWORD=  # Use the non-root user's password (if defined)
-      - jwt.secret-key=95276ee738ca693ec083224d18ba616c06b3504c23882ae16ebca857b037840e
-    ports:
-      - "8081:8080"
-    depends_on:
-      - database
-   
 
   # MySQL Database Service
   database:
     image: mysql:latest
     environment:
       - MYSQL_ROOT_HOST=%
-      - MYSQL_ROOT_PASSWORD=  # Set root password for MySQL
+      - MYSQL_ROOT_PASSWORD=M@hato123  # Set root password for MySQL
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
       - MYSQL_DATABASE=banking_app  # Set database name
       - DATABASE_PORT=3306
+
+  # Backend Service
+  backend:
+    build:
+      context: ./banking-api
+      dockerfile: Dockerfile
+    image: backend:v1.0.0
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://database:3306/banking_app
+      - SPRING_DATASOURCE_USERNAME=root  # Use a non-root user (if defined)
+      - SPRING_DATASOURCE_PASSWORD=M@hato123 # Use the non-root user's password (if defined)
+      - jwt.secret-key=95276ee738ca693ec083224d18ba616c06b3504c23882ae16ebca857b037840e
+    ports:
+      - "8081:8080"
+    depends_on:
+      - database
+
+  # Frontend Service
+  frontend:
+    build:
+      context: ./bank-frontend
+      dockerfile: Dockerfile
+    image: bank-frontend:v1.0.0
+    ports:
+      - "8082:3000"
+    depends_on:
+      - backend
+   
+
+    
    
     
    

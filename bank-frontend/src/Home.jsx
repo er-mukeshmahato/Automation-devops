@@ -1,8 +1,21 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Nav from "./Nav";
 import { Table } from 'react-bootstrap';
 
 function Home({Toggle}) {
+  const [users, setUsers] = useState([])
+  const [loading, setLoading] = useState(false)
+  useEffect(() => {
+    setLoading(true)
+    fetch("http://localhost:8081/api/users/")
+      .then(response => response.json())
+      .then(json => setUsers(json.data))
+      .finally(() => {
+        setLoading(false)
+      })
+  }, [])
+  if (loading) return <div>Loading...</div>;
+
   return (
     <div className="px-3">
       <Nav Toggle={Toggle} />
@@ -46,8 +59,8 @@ function Home({Toggle}) {
             </div>
         </div>
       </div>
-      <Table striped="table caption-top rounded mt-2"> 
-        <caption className="text-white fs-4">List of users</caption>
+    <Table striped="table caption-top rounded mt-2">
+      <caption className="text-white fs-4">List of users</caption>
       <thead>
         <tr>
           <th>#</th>
@@ -57,23 +70,20 @@ function Home({Toggle}) {
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>1</td>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@fat</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td colSpan={2}>Larry the Bird</td>
-          <td>@twitter</td>
-        </tr>
+        {loading ? (
+          <tr>
+            <td colSpan="4">Loading...</td>
+          </tr>
+        ) : (
+          users.map(user => (
+            <tr key={user.id}>
+              <td>{user.id}</td>
+              <td>{user.name}</td>
+              <td>{user.email}</td>
+              <td>{user.password}</td>
+            </tr>
+          ))
+        )}
       </tbody>
     </Table>
     </div>

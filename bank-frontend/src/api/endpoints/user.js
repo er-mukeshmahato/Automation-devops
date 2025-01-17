@@ -3,7 +3,7 @@ import apiClient from '../client';
 
 // Fetch all users
 export const getUsers = () => {
-  return apiClient.get('/users');  // Makes a GET request to '/users'
+  return apiClient.get('/users/');  // Makes a GET request to '/users'
 };
 
 // Fetch a specific user by ID

@@ -1,2 +1,2 @@
 // src/api/index.js
-export * from './endpoints/users';  // Re-export user-related API functions
+export { getUsers } from '../hooks/useUsers';  // Re-export user-related API functions
