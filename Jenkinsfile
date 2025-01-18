@@ -32,18 +32,15 @@ pipeline {
         stage('Push Docker Images') {
             steps {
                 script {
-                    // Log in to Docker registry
-                  //  sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin $DOCKER_REGISTRY"
-
-                    // Push images to Docker registry
-                  //  sh 'docker push $DOCKER_REGISTRY/$BACKEND_IMAGE'
-                   // sh 'docker push $DOCKER_REGISTRY/$FRONTEND_IMAGE'
-                     docker.withRegistry('https://registry.hub.docker.com', '$DOCKER_PASSWORD') {
-                        docker.image("${FRONTEND_IMAGE}:${IMAGE_TAG}").push()
+                    // Login to Docker Hub using the Jenkins credentials
+                    withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+                         docker.image("${FRONTEND_IMAGE}:${IMAGE_TAG}").push()
                     }
                 }
             }
         }
+
 
         stage('Deploy to Kubernetes') {
             steps {
