@@ -14,7 +14,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                checkout scmGit(branches: [[name: '*/test']], extensions: [], userRemoteConfigs: [[credentialsId: 'githubtoken', url: 'https://github.com/er-mukeshmahato/Automation-devops/']])
+                checkout scmGit(branches: [[name: '*/test']], extensions: [], userRemoteConfigs: [[credentialsId: 'gittoken', url: 'https://github.com/er-mukeshmahato/Automation-devops']])
             }
         }
 
