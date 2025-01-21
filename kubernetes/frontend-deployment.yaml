@@ -30,7 +30,7 @@ spec:
     app: frontend
   ports:
     - protocol: TCP
-      port: 8082  # External service port
-      targetPort: 3000  # Container port
-      nodePort: 30001  # Exposing the frontend service on port 30001
-  type: NodePort  # Exposing service outside the cluster
+      port: 3000  # Expose service on port 3000 inside the cluster
+      targetPort: 3000  # Container port (the app is running on port 3000)
+      nodePort: 30001  # Expose service on port 30001 outside the cluster
+  type: NodePort  # Expose service outside the cluster
