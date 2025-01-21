@@ -1,0 +1,67 @@
+pipeline {
+    agent any
+    
+    environment {
+        // Define the frontend image with the repository name and build ID
+        DOCKER_HUB_REPO = 'ermukeshmahato/frontend'
+        DOCKER_REGISTRY = 'https://hub.docker.com/u/ermukeshmahato'
+        DOCKER_HUB_CREDENTIALS_ID='dockerhubjenkins'
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the source code from the Git repository
+                checkout scmGit(branches: [[name: '*/test']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-jenkins-token', url: 'https://github.com/er-mukeshmahato/Automation-devops']])
+            }
+        }
+        
+        stage('Build Frontend Docker Image') {
+            steps {
+                dir('bank-frontend') {
+                    script {
+                        // Build the frontend Docker image with the unique build ID
+                        dockerImage = docker.build("${ DOCKER_HUB_REPO}:latest")
+                    }
+                }
+            }
+        }
+        
+        stage('Push Frontend Docker Image') {
+            steps {
+                script {
+                    // Push the frontend Docker image to Docker Hub
+                    docker.withRegistry("https://registry.hub.docker.com", 'dockerhubjenkins'){
+                        dockerImage.push('latest')
+                    }
+                }
+            }
+        }
+        
+       stage('Deploy to Kubernetes') {
+            steps {
+                dir('kubernetes') {
+                    script {
+                        // Use the kubeconfig credentials to interact with Kubernetes
+                        kubeconfig(credentialsId: 'kub-jen-config', serverUrl: 'https://127.0.0.1:8001') {
+                            // Run kubectl version without --short flag to check Kubernetes version
+                            bat 'kubectl version'
+                            bat 'kubectl apply -f frontend-deployment.yaml'
+                            
+                    }
+                
+                  }
+                }
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo "Frontend Deployment Successful! Build ID: ${BUILD_ID}"
+        }
+        failure {
+            echo "Frontend Deployment Failed! Build ID: ${BUILD_ID}"
+        }
+    }
+}
