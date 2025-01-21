@@ -1,0 +1,39 @@
+{
+    "users": [
+      {
+        "id": 1,
+        "name": "mukesh",
+        "email": "ermukeshmahato@gmail.com",
+        "password": "mukesh",
+        "role": "admin"
+      },
+      {
+        "id": 2,
+        "name": "mahatp",
+        "email": "mahato@gmail.com",
+        "password": "mahato",
+        "role": "user"
+      }
+    ],
+    "posts": [
+      {
+        "id": 1,
+        "userId": 1,
+        "title": "Welcome to the site",
+        "body": "This is the first post on our platform!"
+      },
+      {
+        "id": 2,
+        "userId": 2,
+        "title": "My first post",
+        "body": "Hello! This is my first post on this website."
+      },
+      {
+        "id": 3,
+        "userId": 3,
+        "title": "A day in the life",
+        "body": "Just wanted to share how my day went today!"
+      }
+    ]
+  }
+  

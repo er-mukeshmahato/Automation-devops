@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ermukeshmahato/bank-frontend:v1.0.0
+          image: ermukeshmahato/frontend:latest
           ports:
             - containerPort: 3000  # Expose port 3000 within the container
 

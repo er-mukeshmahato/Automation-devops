@@ -4,15 +4,6 @@ import React, { useState } from 'react';
 import useLogin from '../hooks/useLogin';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const { mutate, isLoading, error } = useLogin();  // Use the useLogin hook
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    mutate({ email, password });  // Call mutate to trigger the login mutation
-  };
   
   render() 
     return (
@@ -24,8 +15,6 @@ const Login = () => {
             type="email"
             className="form-control"
             placeholder="Enter email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
           />
         </div>
         <div className="mb-3">
@@ -34,8 +23,6 @@ const Login = () => {
             type="password"
             className="form-control"
             placeholder="Enter password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
           />
         </div>
         <div className="mb-3">

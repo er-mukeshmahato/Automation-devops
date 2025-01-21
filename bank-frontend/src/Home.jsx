@@ -7,7 +7,7 @@ function Home({Toggle}) {
   const [loading, setLoading] = useState(false)
   useEffect(() => {
     setLoading(true)
-    fetch("http://localhost:8081/api/users/")
+    fetch("data.json")
       .then(response => response.json())
       .then(json => setUsers(json.data))
       .finally(() => {
