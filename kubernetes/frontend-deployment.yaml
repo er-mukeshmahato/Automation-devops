@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: frontend
 spec:
-  replicas: 1  # Adjusted replicas to 1 based on your requirement
+  replicas:3 # Adjusted replicas to 1 based on your requirement
   selector:
     matchLabels:
       app: frontend
@@ -32,5 +32,4 @@ spec:
     - protocol: TCP
       port: 3000  # The port inside the cluster
       targetPort: 3000  # Container port where Vite app is running
-      nodePort: 30001  # Expose the service externally on port 30001
-  type: NodePort  # Makes the service accessible from outside the cluster
+  type: LoadBalancer  # Makes the service accessible from outside the cluster

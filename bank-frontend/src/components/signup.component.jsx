@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 export default class SignUp extends Component {
   render() {
     return (
-      <form>
+      <form id='signup'>
         <h3>Sign Up</h3>
         <div className="mb-3">
           <label>First name</label>
