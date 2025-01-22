@@ -6,7 +6,7 @@ export default class SignUp extends Component {
         <h3>Sign Up</h3>
         <div className="mb-3">
           <label>First name</label>
-          <input
+          <input  id='Fname'
             type="text"
             className="form-control"
             placeholder="First name"
@@ -14,11 +14,11 @@ export default class SignUp extends Component {
         </div>
         <div className="mb-3">
           <label>Last name</label>
-          <input type="text" className="form-control" placeholder="Last name" />
+          <input id='Lname' type="text" className="form-control" placeholder="Last name" />
         </div>
         <div className="mb-3">
           <label>Email address</label>
-          <input
+          <input id='email'
             type="email"
             className="form-control"
             placeholder="Enter email"
@@ -26,7 +26,7 @@ export default class SignUp extends Component {
         </div>
         <div className="mb-3">
           <label>Password</label>
-          <input
+          <input id='password'
             type="password"
             className="form-control"
             placeholder="Enter password"

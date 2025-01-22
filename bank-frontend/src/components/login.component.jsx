@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 
 
-import useLogin from '../hooks/useLogin';
 
 const Login = () => {
   
   render() 
     return (
-      <form onSubmit={handleSubmit}>
+      <form>
         <h3>Sign In</h3>
         <div className="mb-3">
           <label>Email address</label>
-          <input
+          <input id='email'
             type="email"
             className="form-control"
             placeholder="Enter email"
@@ -20,6 +19,7 @@ const Login = () => {
         <div className="mb-3">
           <label>Password</label>
           <input
+          id='password'
             type="password"
             className="form-control"
             placeholder="Enter password"
