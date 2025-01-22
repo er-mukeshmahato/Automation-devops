@@ -2,9 +2,9 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [react()],
+export default {
   server: {
-    port: 8082
-  }
-})
+    host: '0.0.0.0', // This ensures the app listens on all network interfaces
+    port: 3000, // Make sure the port is 3000
+  },
+};
