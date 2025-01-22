@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: frontend
 spec:
-  replicas:3 # Adjusted replicas to 1 based on your requirement
+  replicas: 3 # Adjusted replicas to 1 based on your requirement
   selector:
     matchLabels:
       app: frontend
