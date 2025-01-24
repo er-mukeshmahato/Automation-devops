@@ -34,5 +34,5 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 3000
-      nodePort: 31000  # You can specify a port to expose it outside the cluster
+      nodePort: 32000  # You can specify a port to expose it outside the cluster
   type: NodePort  # Change to NodePort
