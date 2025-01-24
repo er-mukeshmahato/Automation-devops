@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-react-app-deployment
+  labels:
+    app: demo-react-app
+spec:
+  replicas: 1  # Number of replicas (you can scale this based on need)
+  selector:
+    matchLabels:
+      app: demo-react-app
+  template:
+    metadata:
+      labels:
+        app: demo-react-app
+    spec:
+      containers:
+        - name: demo-react-app
+          image: ermukeshmahato/demo-react-app:latest  # Replace with your actual image name
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "development"  # Ensures React runs in development mode
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-react-app-service
+spec:
+  selector:
+    app: demo-react-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+      nodePort: 31000  # You can specify a port to expose it outside the cluster
+  type: NodePort  # Change to NodePort

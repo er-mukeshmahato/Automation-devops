@@ -1,21 +1,21 @@
-FROM node:18-alpine
-# Set the working directory to /app
+# Stage 1: Build the React app
+FROM node:alpine
+
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy the package.json and package-lock.json to the working directory
-COPY ./package*.json ./
+# Copy the package.json and package-lock.json files
+COPY package.json ./
+COPY package-lock.json ./
 
-# Install the dependencies
+# Install dependencies
 RUN npm install
 
-# Copy the remaining application files to the working directory
-COPY . .
+# Copy the rest of the application code
+COPY . ./
 
-# Build the application
-RUN npm run build
-
-# Expose port 3000 for the application
+# Expose port 3000 for the development server
 EXPOSE 3000
 
-# Start the application
-CMD [ "npm", "run", "start" ]
+# Start the React development server
+CMD ["npm", "start"]

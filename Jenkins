@@ -48,6 +48,12 @@ pipeline {
                             bat 'kubectl version'
                             bat 'kubectl apply -f frontend-deployment.yaml'
                             
+                             // Trigger a rolling update (in case the deployment has already been made previously)
+                            sh 'kubectl rollout restart deployment react-app-deployment'
+
+                            // Wait for the rollout to finish
+                            sh 'kubectl rollout status deployment react-app-deployment'
+                            
                     }
                 
                   }

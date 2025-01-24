@@ -17,7 +17,7 @@ spec:
         - name: frontend
           image: ermukeshmahato/frontend:latest  # Ensure this image is available in the registry
           ports:
-            - containerPort: 3000  # Expose the app inside the container on port 3000
+            - containerPort: 80 # Expose the app inside the container on port 3000
 
 ---
 # Frontend Service (NodePort to expose outside the cluster)
@@ -30,8 +30,8 @@ spec:
     app: frontend
   ports:
     - protocol: TCP
-      port: 3000  # The port inside the cluster
-      targetPort: 3000  # Container port where Vite app is running
+      port: 80 # The port inside the cluster
+      targetPort: 80 # Container port where Vite app is running
       nodePort: 30001    # External port to access from outside the cluster
-  type: NodePort 
+  type: LoadBalancer 
  

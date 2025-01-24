@@ -1,34 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-test
+  name: react-app-deployment
   labels:
-    app: nginx-test
+    app: react-app
 spec:
-  replicas: 1
+  replicas: 1  # Number of replicas (you can scale this based on need)
   selector:
     matchLabels:
-      app: nginx-test
+      app: react-app
   template:
     metadata:
       labels:
-        app: nginx-test
+        app: react-app
     spec:
       containers:
-      - name: nginx
-        image: nginx:latest  # Using the official Nginx image
-        ports:
-        - containerPort: 80
+        - name: react-app
+          image: ermukeshmahato/react-app:latest  # Replace with your actual image name
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "development"  # Ensures React runs in development mode
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginx-test
+  name: react-app-service
 spec:
   selector:
-    app: nginx-test
+    app: react-app
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 80
-  type: ClusterIP
+      targetPort: 3000
+      nodePort: 31000  # You can specify a port to expose it outside the cluster
+  type: NodePort  # Change to NodePort
