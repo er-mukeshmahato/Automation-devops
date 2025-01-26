@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         // Define the frontend image with the repository name and build ID
-        DOCKER_HUB_REPO = 'ermukeshmahato/frontend'
+        DOCKER_HUB_REPO = 'ermukeshmahato/demo-react-app'
         DOCKER_REGISTRY = 'https://hub.docker.com/u/ermukeshmahato'
         DOCKER_HUB_CREDENTIALS_ID='dockerhubjenkins'
     }
@@ -31,7 +31,7 @@ pipeline {
             steps {
                 script {
                     // Push the frontend Docker image to Docker Hub
-                    docker.withRegistry("https://registry.hub.docker.com", 'dockerhubjenkins'){
+                    docker.withRegistry("https://registry.hub.docker.com", 'dockerhub-token'){
                         dockerImage.push('latest')
                     }
                 }
@@ -43,16 +43,16 @@ pipeline {
                 dir('kubernetes') {
                     script {
                         // Use the kubeconfig credentials to interact with Kubernetes
-                        kubeconfig(credentialsId: 'kub-jen-config', serverUrl: 'https://127.0.0.1:8001') {
+                        kubeconfig(credentialsId: 'minikube-k8s-credentials', serverUrl: 'https://127.0.0.1:55589') {
                             // Run kubectl version without --short flag to check Kubernetes version
                             bat 'kubectl version'
-                            bat 'kubectl apply -f frontend-deployment.yaml'
+                            bat 'kubectl apply -f demo-react.yaml'
                             
-                             // Trigger a rolling update (in case the deployment has already been made previously)
-                            sh 'kubectl rollout restart deployment react-app-deployment'
+                            bat 'kubectl rollout restart deployment demo-react-app-deployment'
 
                             // Wait for the rollout to finish
-                            sh 'kubectl rollout status deployment react-app-deployment'
+                            bat 'kubectl rollout status deployment demo-react-app-deployment'
+                            
                             
                     }
                 
