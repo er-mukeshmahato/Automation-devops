@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css?family=Fira+Sans:400,500,600,700,800');
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 body {
   background: #e7ebed !important;
@@ -9,6 +11,16 @@ body {
   font-weight: 400;
   font-family: 'Fira Sans', sans-serif;
 }
+label {
+  margin-bottom: 0; /* Remove margin between label and input */
+  display: block; /* Make label block level to avoid spacing issues */
+}
+
+input {
+  margin-top: 0; /* Ensure there's no top margin causing space */
+  padding: 10px; /* Add consistent padding for better user experience */
+}
+
 h1,h2,h3,h4,h5,h6,label,span {
   font-weight: 500;
   font-family: 'Fira Sans', sans-serif;
@@ -68,4 +80,10 @@ body, html, .App, #root, .auth-wrapper {
   background-color: #0860b8;
   color: white;
   cursor: pointer;
+}
+.page{
+  margin-top: 55px;
+}
+.form-wrapper{
+  height: 600px;
 }
