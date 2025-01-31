@@ -81,9 +81,7 @@ body, html, .App, #root, .auth-wrapper {
   color: white;
   cursor: pointer;
 }
-.page{
-  margin-top: 55px;
-}
+
 .form-wrapper{
   height: 600px;
 }

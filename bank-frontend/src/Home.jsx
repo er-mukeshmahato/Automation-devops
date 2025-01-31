@@ -4,109 +4,69 @@ import Nav from "./Nav";
 
 function Home({ Toggle, Title, data }) {
   // Directly set data without fetching or loading state
- console.log(data);
- console.log(Title);
+  console.log(data);
+  console.log(Title);
+
   const renderTable = () => {
     if (!data) {
-      return <div>Loading...</div>; // Show loading message while data is being fetched
-    }
-    if (Title === "Users Information") {
       return (
-        <Table className="table caption-top rounded mt-2" striped>
-          <caption className="text-white fs-4">List of Users</caption>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Password</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.length === 0 ? (
-              <tr>
-                <td colSpan="4">No users available</td>
-              </tr>
-            ) : (
-              data.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.id}</td>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>{user.password}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </Table>
-      );
+        <div className="text-center">
+          <p>Loading...</p>
+        </div>
+      ); // Show loading message while data is being fetched
     }
 
-    if (Title === "Accounts Information") {
-      return (
-        <Table className="table caption-top rounded mt-2" striped>
-          <caption className="text-white fs-4">List of Accounts</caption>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Account Number</th>
-              <th>Balance</th>
-              <th>Account Type</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.length === 0 ? (
-              <tr>
-                <td colSpan="4">No accounts available</td>
-              </tr>
-            ) : (
-              data.map((account) => (
-                <tr key={account.id}>
-                  <td>{account.id}</td>
-                  <td>{account.accountNumber}</td>
-                  <td>{account.balance}</td>
-                  <td>{account.accountType}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </Table>
-      );
+    const tableConfigs = {
+      "Users Information": {
+        caption: "List of Users",
+        headers: ["#", "Name", "Email", "Password"],
+        keys: ["id", "name", "email", "password"]
+      },
+      "Accounts Information": {
+        caption: "List of Accounts",
+        headers: ["#", "Account Number", "Balance", "Account Type"],
+        keys: ["id", "accountNumber", "balance", "accountType"]
+      },
+      "Transactions Information": {
+        caption: "List of Transactions",
+        headers: ["#", "Transaction ID", "Amount", "Transaction Type"],
+        keys: ["id", "transactionId", "amount", "transactionType"]
+      }
+    };
+
+    const config = tableConfigs[Title];
+
+    if (!config) {
+      return null; // Return null if no matching title configuration is found
     }
 
-    if (Title === "Transactions Information") {
-      return (
-        <Table className="table caption-top rounded mt-2" striped>
-          <caption className="text-white fs-4">List of Transactions</caption>
-          <thead>
+    return (
+      <Table className="table caption-top rounded mt-2" striped>
+        <caption className="text-white fs-4">{config.caption}</caption>
+        <thead>
+          <tr>
+            {config.headers.map((header, index) => (
+              <th key={index}>{header}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.length === 0 ? (
             <tr>
-              <th>#</th>
-              <th>Transaction ID</th>
-              <th>Amount</th>
-              <th>Transaction Type</th>
+              <td colSpan={config.headers.length}>No data available</td>
             </tr>
-          </thead>
-          <tbody>
-            {data.length === 0 ? (
-              <tr>
-                <td colSpan="4">No transactions available</td>
+          ) : (
+            data.map((item) => (
+              <tr key={item.id}>
+                {config.keys.map((key, index) => (
+                  <td key={index}>{item[key]}</td>
+                ))}
               </tr>
-            ) : (
-              data.map((transaction) => (
-                <tr key={transaction.id}>
-                  <td>{transaction.id}</td>
-                  <td>{transaction.transactionId}</td>
-                  <td>{transaction.amount}</td>
-                  <td>{transaction.transactionType}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </Table>
-      );
-    }
-
-    return null; // If no title matches
+            ))
+          )}
+        </tbody>
+      </Table>
+    );
   };
 
   return (

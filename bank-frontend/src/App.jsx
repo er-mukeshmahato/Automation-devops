@@ -1,6 +1,6 @@
 import React from "react";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link, useLocation  } from "react-router-dom";
 import Login from "./components/login.component";
 import SignUp from "./components/signup.component";
 import Home from "./components/home.commonent";
@@ -10,11 +10,16 @@ import Report from "./Report";
 import Account from "./Account";
 
 
-
 function App() {
+  const location = useLocation(); // Get current location
+
+  // Check if the URL contains '/admin' and decide whether to render the navbar
+  const isAdminPage = location.pathname.startsWith("/admin");
+
   return (
-    <Router>
-      <div className="App">
+    <div className="App">
+      {/* Render Navbar only if the path does not start with '/admin' */}
+      {!isAdminPage && (
         <nav className="navbar navbar-expand-lg navbar-light fixed-top">
           <div className="container">
             <Link className="navbar-brand" to={"/home"}>
@@ -41,19 +46,24 @@ function App() {
             </div>
           </div>
         </nav>
-        <div className="page">
-          <Routes>
-            <Route exact path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/sign-up" element={<SignUp />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/user-page" element={<User />} />
-            <Route path="/accounts" element={<Account />} />
-            <Route path="/report" element={<Report />} />
-          </Routes>
-        </div>
+      )}
+
+      <div className="page">
+        <Routes>
+          <Route exact path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/sign-up" element={<SignUp />} />
+          
+          {/* Admin routes */}
+          <Route path="/admin/dashboard" element={<Dashboard />} />
+          <Route path="/admin/user-page" element={<User />} />
+          <Route path="/admin/accounts" element={<Account />} />
+         
+          <Route path="/admin/report" element={<Report />} />
+        </Routes>
       </div>
-    </Router>
+    </div>
   );
 }
+
 export default App;

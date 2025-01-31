@@ -9,23 +9,23 @@ function Sidebar() {
       </div>
       <hr className="text-dark" />
       <div className="list-group list-group-flush">
-        <a className="list-group-item py-2" href="/dashboard">
+        <a className="list-group-item py-2" href="/admin/dashboard">
           <i className="bi bi-speedometer2 me-2 fs-5"></i>
           <span >Dashboard</span>
         </a>
-        <a className="list-group-item py-2" href="/user-page">
+        <a className="list-group-item py-2" href="/admin/user-page">
           <i className="bi bi-people fs-5 me-2"></i>
           <span >User</span>
         </a>
-        <a className="list-group-item py-2" href="/accounts">
+        <a className="list-group-item py-2" href="/admin/accounts">
           <i className="bi bi-bank fs-5 me-2"></i>
           <span >Account</span>
         </a>
-        <a className="list-group-item py-2" href="/transaction">
+        <a className="list-group-item py-2" href="/admin/transaction">
           <i className="bi bi-house fs-5 me-2"></i>
           <span >Transaction</span>
         </a>
-        <a className="list-group-item py-2" href="/report">
+        <a className="list-group-item py-2" href="/admin/report">
           <i className="bi bi-clipboard fs-5 me-2"></i>
           <span >Report </span>
         </a>
