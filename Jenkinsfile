@@ -6,15 +6,8 @@ pipeline {
         DOCKER_HUB_REPO = 'ermukeshmahato/demo-react-app'
         DOCKER_REGISTRY = 'https://hub.docker.com/u/ermukeshmahato'
         DOCKER_HUB_CREDENTIALS_ID = 'dockerhubjenkins'
-        SONAR_PROJECT_KEY = 'demo-react-app'
-        SONAR_HOST_URL = 'http://192.168.0.105:9000'
-        SONAR_SCANNER_HOME = 'sonar-scanner'  // Set Sonar Scanner home directory
     }
-     tools {
-        // Define the SonarScanner tool here
-        sonarScanner 'SonarScanner'
-    }
-
+     
     stages {
         stage('Checkout') {
             steps {
