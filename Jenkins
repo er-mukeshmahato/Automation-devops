@@ -1,13 +1,20 @@
 pipeline {
     agent any
-    
+
     environment {
         // Define the frontend image with the repository name and build ID
         DOCKER_HUB_REPO = 'ermukeshmahato/demo-react-app'
         DOCKER_REGISTRY = 'https://hub.docker.com/u/ermukeshmahato'
-        DOCKER_HUB_CREDENTIALS_ID='dockerhubjenkins'
+        DOCKER_HUB_CREDENTIALS_ID = 'dockerhubjenkins'
+        SONAR_PROJECT_KEY = 'demo-react-app'
+        SONAR_HOST_URL = 'http://192.168.0.105:9000'
+        SONAR_SCANNER_HOME = 'sonar-scanner'  // Set Sonar Scanner home directory
     }
-    
+     tools {
+        // Define the SonarScanner tool here
+        sonarScanner 'SonarScanner'
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -15,38 +22,34 @@ pipeline {
                 checkout scmGit(branches: [[name: '*/test']], extensions: [], userRemoteConfigs: [[credentialsId: 'git-jenkins-token', url: 'https://github.com/er-mukeshmahato/Automation-devops']])
             }
         }
-         
-        
         stage('Build Frontend Docker Image') {
             steps {
                 dir('bank-frontend') {
                     script {
                         // Build the frontend Docker image with the unique build ID
-                        dockerImage = docker.build("${ DOCKER_HUB_REPO}:latest")
+                        dockerImage = docker.build("${DOCKER_HUB_REPO}:latest")
                     }
                 }
             }
         }
-        
+
         stage('Push Frontend Docker Image') {
             steps {
                 script {
                     // Push the frontend Docker image to Docker Hub
-                    docker.withRegistry("https://registry.hub.docker.com", 'dockerhub-token'){
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-token') {
                         dockerImage.push('latest')
                     }
                 }
             }
         }
 
-        
-       stage('Deploy to Kubernetes') {
+        stage('Deploy to Kubernetes') {
             steps {
                 dir('kubernetes') {
                     script {
                         // Use the kubeconfig credentials to interact with Kubernetes
-                        kubeconfig(credentialsId: 'minikube-k8s-credentials', serverUrl: 'https://127.0.0.1:55589') {
-                            // Run kubectl version without --short flag to check Kubernetes version
+                        kubeconfig(credentialsId: 'minikube-k8s-credentials', serverUrl: 'http://127.0.0.1:51684') {
                             bat 'kubectl version'
                             bat 'kubectl apply -f demo-react.yaml'
                             
@@ -54,16 +57,13 @@ pipeline {
 
                             // Wait for the rollout to finish
                             bat 'kubectl rollout status deployment demo-react-app-deployment'
-                            
-                           
+                        }
                     }
-                
-                  }
                 }
             }
         }
     }
-    
+
     post {
         success {
             echo "Frontend Deployment Successful! Build ID: ${BUILD_ID}"
