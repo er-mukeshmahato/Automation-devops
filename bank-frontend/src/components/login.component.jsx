@@ -15,7 +15,7 @@ const Login = () => {
     // Dummy credentials check
     if (email === "admin@techno.com" && password === "admin123") {
       // Redirect to admin panel on successful login
-      navigate("/dashboard");
+      navigate("/admin/dashboard");
     } else {
       setError("Invalid credentials, please try again.");
     }
